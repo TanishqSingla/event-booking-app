@@ -10,12 +10,28 @@ app.use(bodyParser.json());
 
 app.use('/graphql', graphqlHttp.graphqlHTTP({
   schema: buildSchema(
-    `schema {
-      query: string
-      mutation: string
+    `type RootQuery {
+      events: [String!]!
+    }
+
+    type RootMutation {
+      createEvent(name: String): String
+    }
+
+    schema {
+      query: RootQuery
+      mutation: RootMutation
     }`
   ),
-  rootValue: {}
+  rootValue: {
+    events: () => {
+      return ['Coding event', 'lunch', 'dinner']
+    },
+    createEvents: (args) => {
+      const eventName = args.name;
+      return eventName;
+    }
+  }
 }));
 
 app.listen(3000, () => {
