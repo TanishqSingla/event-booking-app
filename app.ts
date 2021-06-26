@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 
-import graphqlHttp from 'express-graphql';
+import * as graphqlHttp from 'express-graphql';
 import { buildSchema } from 'graphql'
 
 const app = express();
@@ -25,13 +25,14 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
   ),
   rootValue: {
     events: () => {
-      return ['Coding event', 'lunch', 'dinner']
+      return ['Opening note', 'Conference', 'Closing note']
     },
-    createEvents: (args) => {
+    createEvents: (args: any) => {
       const eventName = args.name;
       return eventName;
-    }
-  }
+    },
+  },
+  graphiql: true
 }));
 
 app.listen(3000, () => {
