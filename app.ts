@@ -2,8 +2,10 @@ import express from "express";
 import bodyParser from "body-parser";
 
 import * as graphqlHttp from 'express-graphql';
-import { buildSchema } from 'graphql'
-import { DESTRUCTION } from "dns";
+import { buildSchema } from 'graphql';
+import * as mongoose from 'mongoose';
+import { PASSWORD, USERNAME } from "./secrets";
+
 
 const app = express();
 
@@ -72,6 +74,9 @@ app.use('/graphql', graphqlHttp.graphqlHTTP({
   graphiql: true
 }));
 
-app.listen(3000, () => {
+mongoose.connect(`mongodb+srv://${USERNAME}:${PASSWORD}@cluster0.aac6e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`).then(()=>
+  app.listen(3000, () => {
   console.log("server is up and running at port 3000");
-});
+})
+).catch(e => console.log(e))
+
