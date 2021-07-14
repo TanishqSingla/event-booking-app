@@ -3,8 +3,10 @@ import bodyParser from "body-parser";
 
 import * as graphqlHttp from "express-graphql";
 import { buildSchema } from "graphql";
-import mongoose from "mongoose";
+import mongoose, { Date } from "mongoose";
 import { PASSWORD, USERNAME } from "./secrets";
+
+import { eventModel as EventModel } from "./models/event";
 
 const app = express();
 
@@ -60,15 +62,21 @@ app.use(
         return events;
       },
       createEvents: (args: EventQuery) => {
-        const event = {
-          _id: Math.random().toString(),
+        // const event = {
+        //   _id: Math.random().toString(),
+        //   title: args.eventInput.title,
+        //   description: args.eventInput.description,
+        //   price: +args.eventInput.price,
+        //   date: args.eventInput.date,
+        // };
+        
+        const event = new EventModel({
           title: args.eventInput.title,
           description: args.eventInput.description,
           price: +args.eventInput.price,
-          date: args.eventInput.date,
-        };
+          date: new Date(args.eventInput.date),
+        });
 
-        events.push(event);
         return event;
       },
     },
