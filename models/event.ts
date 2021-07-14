@@ -1,8 +1,13 @@
-import mongoose from "mongoose";
+import mongoose, { Model, Schema } from "mongoose";
 
-const Schema = mongoose.Schema;
+export interface Event {
+  title: string;
+  description: string;
+  price: number;
+  date: Date;
+}
 
-const eventSchema = new Schema({
+const eventSchema = new Schema<Event>({
   title: {
     type: String,
     required: true,
@@ -21,4 +26,4 @@ const eventSchema = new Schema({
   },
 });
 
-export const eventModel = mongoose.model('Event', eventSchema);
+export const EventModel = mongoose.model<Event>('Event', eventSchema);

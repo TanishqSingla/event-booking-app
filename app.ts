@@ -2,20 +2,12 @@ import express from "express";
 import bodyParser from "body-parser";
 
 import * as graphqlHttp from "express-graphql";
+import  mongoose from "mongoose";
 import { buildSchema } from "graphql";
-import mongoose, { Date } from "mongoose";
 import { PASSWORD, USERNAME } from "./secrets";
-
-import { eventModel as EventModel } from "./models/event";
+import { Event, EventModel } from "./models/event";
 
 const app = express();
-
-interface Event {
-  title: string;
-  description: string;
-  price: number;
-  date: string;
-}
 
 interface EventQuery {
   eventInput: Event;
@@ -62,14 +54,6 @@ app.use(
         return events;
       },
       createEvents: (args: EventQuery) => {
-        // const event = {
-        //   _id: Math.random().toString(),
-        //   title: args.eventInput.title,
-        //   description: args.eventInput.description,
-        //   price: +args.eventInput.price,
-        //   date: args.eventInput.date,
-        // };
-        
         const event = new EventModel({
           title: args.eventInput.title,
           description: args.eventInput.description,
@@ -77,16 +61,26 @@ app.use(
           date: new Date(args.eventInput.date),
         });
 
-        return event;
+        return event
+          .save()
+          .then((result) => {
+            console.log(result);
+            return result;
+          })
+          .catch((e) => {
+            console.log(e);
+            throw e;
+          });
       },
     },
     graphiql: true,
   })
 );
 
-mongoose.connect(
-    `mongodb+srv://${USERNAME}:${PASSWORD}@cluster0.aac6e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`,
-    {useNewUrlParser: true, useUnifiedTopology: true}
+mongoose
+  .connect(
+    `mongodb+srv://${USERNAME}:${PASSWORD}@cluster0.aac6e.mongodb.net/fistDatabase?retryWrites=true&w=majority`,
+    { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() =>
     app.listen(3000, () => {
